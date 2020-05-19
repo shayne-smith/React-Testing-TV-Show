@@ -6,16 +6,16 @@ import Episodes from './Episodes';
 import { showData } from '../data/showData';
 
 test('renders Episodes without errors', () => {
-    render(<Episodes episodes={showData._embedded.episodes} />);
+    render(<Episodes episodes={showData.data._embedded.episodes} />);
 });
 
 test('renders episodes when episodes data is passed down', () => {
 
     const { getByText, queryByText, rerender } = render(
-        <Episodes episodes={showData._embedded.episodes} />
+        <Episodes episodes={showData.data._embedded.episodes} />
     );
 
-    showData._embedded.episodes.forEach(episode => {
+    showData.data._embedded.episodes.forEach(episode => {
         expect(getByText(episode.name)).toBeInTheDocument();
     })
 });

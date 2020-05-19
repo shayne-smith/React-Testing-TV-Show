@@ -1,9 +1,11 @@
 import React from 'react';
-import { render, waitFor, queryByTestId } from '@testing-library/react';
+import { render, waitFor, queryByTestId, waitForElementToBeRemoved, getByText, queryAllByText } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { fetchShow as mockFetchShow } from './api/fetchShow';
 import App from './App';
 
 import { showData } from './data/showData';
+import { act } from 'react-dom/test-utils';
 
 // outside of the tests - mock "fetchShow"
 jest.mock('./api/fetchShow');
@@ -16,23 +18,35 @@ test('renders without errors', () => {
 });
 
 // async/await
-test('renders data after API is called', async () => {
+test('renders data after API is called', () => {
     mockFetchShow.mockResolvedValueOnce(showData);
-    console.log('fake showData is: ', showData);
 
-    const { getByText, queryByText, queryAllByTestId, queryByTestId } = render(<App />);
+    const { queryByText, queryByTestId } = render(<App />);
 
-    // console.log('queryAllByTestId results: ', queryAllByTestId(/episodes/i));
+    waitForElementToBeRemoved(queryByText(/Fetching data.../i))
+        .then(() => {
+            expect(queryByTestId(/showName/i)).toBeInTheDocument();
+        })
 
-    // await waitFor(() => expect(queryAllByTestId(/episodes/i)).toHaveLength(26));
+    expect(mockFetchShow).toHaveBeenCalledTimes(2);
 
-    const showName = getByText(/Stranger Things/i);
-    console.log(showName);
-    console.log('showName is: ', queryByTestId(/showName/i));
-    console.log('showName is: ', queryByText(/Stranger Things/i));
+});
 
-    await waitFor(() => expect(queryAllByTestId(/showName/)).toHaveLength(1));
-    expect(mockFetchShow).toHaveBeenCalledTimes(1);
+test('renders all available seasons from data API', async () => {
+    act(() => {
+        mockFetchShow.mockResolvedValueOnce(showData);
+    });
 
+    const { getByText, queryByText, queryAllByText } = render(<App />);
+
+    await waitForElementToBeRemoved(queryByText(/Fetching data.../i))
+        .then(() => {
+            const seasonSelection = getByText(/Select a season/i);
+            userEvent.click(seasonSelection, 'Select a season');
+        })
+        .catch(err => console.log(err))
+
+    await waitFor(() => expect(queryAllByText(/season /i)).toHaveLength(4));
+    expect(mockFetchShow).toHaveBeenCalledTimes(3);
 });
 

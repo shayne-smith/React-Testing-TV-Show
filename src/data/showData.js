@@ -1,4 +1,5 @@
 export const showData = {
+  data: {
     id: 2993,
     url: 'http://www.tvmaze.com/shows/2993/stranger-things',
     name: 'Stranger Things',
@@ -595,4 +596,5 @@ export const showData = {
         }
       ]
     }
+  }
   };
