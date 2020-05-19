@@ -9,7 +9,7 @@ import { act } from 'react-dom/test-utils';
 
 // outside of the tests - mock "fetchShow"
 jest.mock('./api/fetchShow');
-console.log('mockFetchShow is: ', mockFetchShow);
+// console.log('mockFetchShow is: ', mockFetchShow);
 
 test('renders without errors', () => {
     mockFetchShow.mockResolvedValueOnce();
@@ -29,7 +29,6 @@ test('renders data after API is called', () => {
         })
 
     expect(mockFetchShow).toHaveBeenCalledTimes(2);
-
 });
 
 test('renders all available seasons from data API', async () => {
@@ -42,7 +41,7 @@ test('renders all available seasons from data API', async () => {
     await waitForElementToBeRemoved(queryByText(/Fetching data.../i))
         .then(() => {
             const seasonSelection = getByText(/Select a season/i);
-            userEvent.click(seasonSelection, 'Select a season');
+            userEvent.click(seasonSelection);
         })
         .catch(err => console.log(err))
 

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export const fetchShow = () => {
+    console.log('fetchShow is running');
     return axios
       .get(
           "https://api.tvmaze.com/singlesearch/shows?q=stranger-things&embed=episodes"
@@ -9,7 +10,7 @@ export const fetchShow = () => {
           return res
       })
       .catch(err => {
-          console.log('fetchShow() error is showing: ', err);
+          console.error('error fetching data from api, err: ', err.message);
           return err;
       })
   };
